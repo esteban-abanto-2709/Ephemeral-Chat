@@ -1,0 +1,18 @@
+# dependencias
+node_modules/
+
+# salida de compilación
+dist/
+
+# variables de entorno
+.env
+.env.*
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# sistema operativo
+.DS_Store
+Thumbs.db
