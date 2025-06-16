@@ -1,30 +1,62 @@
-import { useState } from 'react'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3000'); // Cambiar en producción
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [message, setMessage] = useState('');
+	const [messages, setMessages] = useState<string[]>([]);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-200 to-indigo-400 text-center p-10">
-      <div className="flex justify-center gap-8 mb-8">
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="h-16 hover:scale-110 transition" alt="Vite logo" />
-        </a>
-      </div>
-      <h1 className="text-4xl font-bold text-white mb-4">Vite + React + Tailwind</h1>
-      <div className="bg-white p-6 rounded-xl shadow-lg inline-block">
-        <button
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          count is {count}
-        </button>
-        <p className="mt-4 text-gray-600">
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-    </div>
-  )
+	useEffect(() => {
+		// Recibir mensajes del servidor
+		socket.on('chat:message', (msg) => {
+			console.log('Mensaje recibido:', msg);
+			setMessages((prev) => [...prev, msg]);
+		});
+
+		// Limpiar al desmontar
+		return () => {
+			socket.off('chat:message');
+		};
+	}, []);
+
+	const handleSend = () => {
+		if (message.trim() === '') return;
+		socket.emit('chat:message', message);
+		setMessages((prev) => [...prev, `(Tú): ${message}`]);
+		setMessage('');
+	};
+
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-sky-200 to-indigo-400 text-center p-10">
+
+			<h1 className="text-4xl font-bold text-white mb-4">Ephemeral Chat</h1>
+
+			<div className="bg-white p-6 rounded-xl shadow-lg max-w-md mx-auto">
+				<div className="mb-4 h-40 overflow-y-auto border rounded p-2 text-left text-sm bg-gray-100">
+					{messages.map((msg, idx) => (
+						<p key={idx} className="mb-1">{msg}</p>
+					))}
+				</div>
+				<div className="flex gap-2">
+					<input
+						type="text"
+						value={message}
+						onChange={(e) => setMessage(e.target.value)}
+						onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+						className="flex-1 px-3 py-2 border rounded"
+						placeholder="Escribe un mensaje"
+					/>
+					<button
+						onClick={handleSend}
+						className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+					>
+						Enviar
+					</button>
+				</div>
+			</div>
+		</div>
+	);
 }
 
-export default App
+export default App;

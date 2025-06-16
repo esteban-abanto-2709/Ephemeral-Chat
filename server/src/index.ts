@@ -14,12 +14,19 @@ app.get('/', (req, res) => {
 	res.send('Hello from server!');
 });
 
+// Configuración de Socket.IO
 io.on('connection', (socket) => {
-	console.log('A user connected:', socket.id);
+	console.log(`[Socket] User connected: ${socket.id}`);
 
+	socket.on('chat:message', handleChatMessage);
 	socket.on('disconnect', () => {
-		console.log('User disconnected:', socket.id);
+		console.log(`[Socket] User disconnected: ${socket.id}`);
 	});
+	
+	function handleChatMessage(message: string) {
+		console.log(`[Chat] From ${socket.id}: ${message}`);
+		socket.broadcast.emit('chat:message', message);
+	}
 });
 
 const PORT = process.env.PORT || 3000;
