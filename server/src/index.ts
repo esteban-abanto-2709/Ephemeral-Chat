@@ -14,7 +14,6 @@ app.get('/', (req, res) => {
 	res.send('Hello from server!');
 });
 
-// Configuración de Socket.IO
 io.on('connection', (socket) => {
 	console.log(`[Socket] User connected: ${socket.id}`);
 
