@@ -1,59 +1,88 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
+import { MessageInput } from '@/components/MessageInput';
+import { ChatBubble } from '@/components/ChatBubble';
+import type { Message } from '@/types/Message';
+
 const socket = io('http://localhost:3000'); // Cambiar en producción
 
 function App() {
-	const [message, setMessage] = useState('');
-	const [messages, setMessages] = useState<string[]>([]);
+
+	const [socketId, setSocketId] = useState<string | null>(null);
+	const [messages, setMessages] = useState<Message[]>([]);
 
 	useEffect(() => {
-		// Recibir mensajes del servidor
-		socket.on('chat:message', (msg) => {
-			console.log('Mensaje recibido:', msg);
-			setMessages((prev) => [...prev, msg]);
+
+		socket.on('connect', () => {
+			console.log('[Socket] Connected with ID:', socket.id);
+			setSocketId(socket.id ?? null);
 		});
 
-		// Limpiar al desmontar
+		socket.on('chat:message', ({ content, senderId }) => {
+			const receivedMessage: Message = {
+				id: Date.now().toString(),
+				content,
+				timestamp: new Date(),
+				isOwn: senderId === socketId,
+				senderId,
+			};
+
+			setMessages((prev) => [...prev, receivedMessage]);
+		});
+
 		return () => {
+			socket.off('connect');
 			socket.off('chat:message');
 		};
-	}, []);
 
-	const handleSend = () => {
-		if (message.trim() === '') return;
-		socket.emit('chat:message', message);
-		setMessages((prev) => [...prev, `(Tú): ${message}`]);
-		setMessage('');
+	}, [socketId]);
+
+	const handleSendMessage = (content: string) => {
+		if (content.trim() === '' || !socketId) return;
+
+		const newMessage: Message = {
+			id: Date.now().toString(),
+			content,
+			timestamp: new Date(),
+			isOwn: true,
+			senderId: socketId,
+		};
+
+		socket.emit('chat:message', {
+			content,
+			senderId: socketId,
+		});
+
+		setMessages((prev) => [...prev, newMessage]);
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-sky-200 to-indigo-400 text-center p-10">
+		<div className='min-h-screen bg-gradient-to-br from-sky-200 via-purple-200 to-violet-300 flex justify-center'>
+			<div className="flex flex-col h-screen bg-gray-50" style={{ width: '100%', maxWidth: '600px' }}>
+				{/* Header */}
+				<header className="bg-white border-b border-gray-200 p-4 shadow-sm">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center">
+							<div>
+								<h1 className="text-lg font-semibold text-gray-800">
+									Chat Global
+								</h1>
+								<div className="flex items-center">
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
 
-			<h1 className="text-4xl font-bold text-white mb-4">Ephemeral Chat</h1>
-
-			<div className="bg-white p-6 rounded-xl shadow-lg max-w-md mx-auto">
-				<div className="mb-4 h-40 overflow-y-auto border rounded p-2 text-left text-sm bg-gray-100">
-					{messages.map((msg, idx) => (
-						<p key={idx} className="mb-1">{msg}</p>
+				{/* Messages Area */}
+				<div className="flex-1 overflow-y-auto p-4 space-y-2">
+					{messages.map((message) => (
+						<ChatBubble key={message.id} message={message} />
 					))}
 				</div>
-				<div className="flex gap-2">
-					<input
-						type="text"
-						value={message}
-						onChange={(e) => setMessage(e.target.value)}
-						onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-						className="flex-1 px-3 py-2 border rounded"
-						placeholder="Escribe un mensaje"
-					/>
-					<button
-						onClick={handleSend}
-						className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-					>
-						Enviar
-					</button>
-				</div>
+
+				<MessageInput onSendMessage={handleSendMessage} />
 			</div>
 		</div>
 	);

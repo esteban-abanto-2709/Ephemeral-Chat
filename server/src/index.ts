@@ -18,13 +18,14 @@ io.on('connection', (socket) => {
 	console.log(`[Socket] User connected: ${socket.id}`);
 
 	socket.on('chat:message', handleChatMessage);
+	
 	socket.on('disconnect', () => {
 		console.log(`[Socket] User disconnected: ${socket.id}`);
 	});
-	
-	function handleChatMessage(message: string) {
-		console.log(`[Chat] From ${socket.id}: ${message}`);
-		socket.broadcast.emit('chat:message', message);
+
+	function handleChatMessage({ content, senderId }: { content: string; senderId: string }) {
+		console.log(`[Chat] From ${senderId}: ${content}`);
+		socket.broadcast.emit('chat:message', { content, senderId });
 	}
 });
 
