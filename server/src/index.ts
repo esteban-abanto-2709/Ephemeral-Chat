@@ -16,14 +16,17 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
 	console.log(`[Socket] User connected: ${socket.id}`);
+	io.emit('users:count', io.engine.clientsCount);
 
 	socket.on('chat:message', handleChatMessage);
-	
+
 	socket.on('disconnect', () => {
 		console.log(`[Socket] User disconnected: ${socket.id}`);
+		io.emit('users:count', io.engine.clientsCount);
 	});
 
 	function handleChatMessage({ content, senderId }: { content: string; senderId: string }) {
+		console.log(`[Socket] Message from ${socket.id}: ${content}`);
 		console.log(`[Chat] From ${senderId}: ${content}`);
 		socket.broadcast.emit('chat:message', { content, senderId });
 	}
