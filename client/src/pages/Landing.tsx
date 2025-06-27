@@ -2,7 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '@/context/SocketContext';
 
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Link2, Users } from 'lucide-react';
+import { MessageCircle, Link2, Users, Globe } from 'lucide-react';
+import { Linkedin, Instagram, Github } from 'lucide-react';
 
 import GradientBackground from '@/components/GradientBackground';
 
@@ -13,10 +14,8 @@ function Landing() {
     const [userCount, setUserCount] = useState(0);
 
     useEffect(() => {
-        console.log('[Landing] Socket connected:', socket);
-        
-		if (!socket) return;
-        
+        if (!socket) return;
+
         socket.on('users:count', (count) => {
             setUserCount(count);
         });
@@ -24,7 +23,7 @@ function Landing() {
         return () => {
             socket.off('users:count');
         };
-        
+
     }, [socket]);
 
     return (
@@ -50,11 +49,11 @@ function Landing() {
                         {/* Action Buttons */}
                         <div className="space-y-4 mb-12">
                             <button
-                                onClick={() => navigate('/chat/random/1234')}
+                                onClick={() => navigate('/chat/global')}
                                 className="w-full max-w-sm h-14 px-6 text-lg font-medium bg-white text-gray-800 hover:bg-gray-50 shadow-lg transition-all duration-200 hover:shadow-xl rounded-md inline-flex items-center justify-center"
                             >
-                                <MessageCircle className="mr-3 h-5 w-5" />
-                                Hablar con alguien al azar
+                                <Globe className="mr-3 h-5 w-5" />
+                                Ingresar al chat global
                             </button>
 
                             <button
@@ -66,10 +65,11 @@ function Landing() {
                             </button>
 
                             <button
-                                onClick={() => navigate('/chat/global')}
+                                onClick={() => navigate('/chat/random/1234')}
                                 className="w-full max-w-sm h-14 px-6 text-lg font-medium bg-white/20 border border-white/30 text-white hover:bg-white/30 shadow-lg transition-all duration-200 hover:shadow-xl rounded-md inline-flex items-center justify-center backdrop-blur-sm"
                             >
-                                Ingresar al chat global
+                                <MessageCircle className="mr-3 h-5 w-5" />
+                                Hablar con alguien al azar
                             </button>
                         </div>
 
@@ -83,9 +83,37 @@ function Landing() {
 
                 {/* Footer */}
                 <footer className="text-center py-8">
-                    <p className="text-white/70 text-sm">
+                    <p className="text-white/70 text-sm mb-4">
                         Proyecto personal hecho para portafolio
                     </p>
+
+                    {/* Social Links */}
+                    <div className="flex justify-center space-x-4">
+                        <a
+                            href="https://www.linkedin.com/in/esteban-abanto/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white/70 hover:text-white transition-colors duration-200"
+                        >
+                            <Linkedin className="h-5 w-5" />
+                        </a>
+                        <a
+                            href="https://www.instagram.com/esteban.abanto.2709/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white/70 hover:text-white transition-colors duration-200"
+                        >
+                            <Instagram className="h-5 w-5" />
+                        </a>
+                        <a
+                            href="https://github.com/esteban-abanto-2709"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white/70 hover:text-white transition-colors duration-200"
+                        >
+                            <Github className="h-5 w-5" />
+                        </a>
+                    </div>
                 </footer>
             </div>
         </GradientBackground>

@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 import type { Message } from '@/types/Message';
 
-import { MessageRenderer } from '@/components/MessageRenderer';
+import { MessageRenderer } from '@/components/Messages/MessageRenderer';
 
-interface MessagesAreaProps {
+interface ChatAreaProps {
     messages: Message[];
     ownId: string;
 }
 
-export const MessagesArea = ({ messages, ownId }: MessagesAreaProps) => {
+export const ChatArea = ({ messages, ownId }: ChatAreaProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll cuando cambia la lista de mensajes

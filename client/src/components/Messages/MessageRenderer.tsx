@@ -1,8 +1,8 @@
 import type { Message } from '@/types/Message';
 
-import { SystemMessageBubble } from '@/components/Chat/SystemMessageBubble';
-import { EmitterMessageBubble } from '@/components/Chat/EmitterMessageBubble';
-import { ReceiverMessageBubble } from '@/components/Chat/ReceiverMessageBubble';
+import { SystemMessageBubble } from '@/components/Messages/SystemMessageBubble';
+import { EmitterMessageBubble } from '@/components/Messages/EmitterMessageBubble';
+import { ReceiverMessageBubble } from '@/components/Messages/ReceiverMessageBubble';
 
 interface MessageRendererProps {
   message: Message;

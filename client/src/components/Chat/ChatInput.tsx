@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
 
-interface MessageInputProps {
+interface ChatInputProps {
   onSendMessage: (message: string) => void;
 }
 
-export const MessageInput = ({ onSendMessage }: MessageInputProps) => {
+export const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

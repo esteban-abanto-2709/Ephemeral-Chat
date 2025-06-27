@@ -2,8 +2,11 @@ import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '@/context/SocketContext';
 
 import type { Message } from '@/types/Message';
-import { MessagesArea } from '@/components/MessagesArea';
-import { MessageInput } from '@/components/MessageInput';
+import { ChatHeader } from "@/components/Chat/ChatHeader";
+import { ChatArea } from '@/components/Chat/ChatArea';
+import { ChatInput } from '@/components/Chat/ChatInput';
+
+import { Globe } from 'lucide-react';
 
 function GlobalChat() {
   const socket = useContext(SocketContext);
@@ -62,23 +65,13 @@ function GlobalChat() {
     <div className='min-h-screen bg-gradient-to-br from-sky-200 via-purple-200 to-violet-300 flex justify-center'>
       <div className="flex flex-col h-screen bg-gray-50" style={{ width: '100%', maxWidth: '600px' }}>
 
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div>
-                <h1 className="text-lg font-semibold text-gray-800">
-                  Chat Global
-                </h1>
-                <div className="flex items-center">
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <MessagesArea messages={messages} ownId={socket.id} />
-        <MessageInput onSendMessage={handleSendMessage} />
+        <ChatHeader
+          title="Global Chat"
+          icon={<Globe className="h-5 w-5" />}
+          connectedCount={45}
+        />
+        <ChatArea messages={messages} ownId={socket.id} />
+        <ChatInput onSendMessage={handleSendMessage} />
       </div>
     </div>
   );
