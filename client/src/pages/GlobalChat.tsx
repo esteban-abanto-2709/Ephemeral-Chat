@@ -1,87 +1,87 @@
 import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '@/context/SocketContext';
 
-import { MessageInput } from '@/components/MessageInput';
-import { ChatBubble } from '@/components/ChatBubble';
 import type { Message } from '@/types/Message';
-
+import { MessagesArea } from '@/components/MessagesArea';
+import { MessageInput } from '@/components/MessageInput';
 
 function GlobalChat() {
-    const socket = useContext(SocketContext);
+  const socket = useContext(SocketContext);
 
-	const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
-	useEffect(() => {
-		if (!socket) return;
+  useEffect(() => {
+    if (!socket) return;
 
-		socket.on('chat:message', ({ content, senderId }) => {
-			const receivedMessage: Message = {
-				id: Date.now().toString(),
-				content,
-				timestamp: new Date(),
-				isOwn: senderId === socket.id,
-				senderId,
-			};
+    socket.on('chat:message', ({ content, senderId, timestamp }) => {
 
-			setMessages((prev) => [...prev, receivedMessage]);
-		});
+      const receivedMessage: Message = {
+        sender: senderId,
+        content,
+        timestamp: new Date(timestamp),
+      };
 
-		return () => {
-			socket.off('connect');
-			socket.off('chat:message');
-		};
+      setMessages((prev) => [...prev, receivedMessage]);
+    });
 
-	}, [socket]);
+    return () => {
+      socket.off('connect');
+      socket.off('chat:message');
+    };
 
-	const handleSendMessage = (content: string) => {
-        console.log('[GlobalChat] Sending message:', content);
-		if (content.trim() === '' || !socket || !socket.id) return;
+  }, [socket]);
 
-		const newMessage: Message = {
-			id: Date.now().toString(),
-			content,
-			timestamp: new Date(),
-			isOwn: true,
-			senderId: socket.id,
-		};
+  const handleSendMessage = (content: string) => {
+    console.log('[GlobalChat] Sending message:', content);
+    if (content.trim() === '' || !socket || !socket.id) return;
 
-		socket.emit('chat:message', {
-			content,
-			senderId: socket.id,
-		});
+    const newMessage: Message = {
+      sender: socket.id,
+      content,
+      timestamp: new Date(),
+    };
 
-		setMessages((prev) => [...prev, newMessage]);
-	};
+    socket.emit('chat:message', {
+      senderId: socket.id,
+      content,
+    });
 
-	return (
-		<div className='min-h-screen bg-gradient-to-br from-sky-200 via-purple-200 to-violet-300 flex justify-center'>
-			<div className="flex flex-col h-screen bg-gray-50" style={{ width: '100%', maxWidth: '600px' }}>
-				{/* Header */}
-				<header className="bg-white border-b border-gray-200 p-4 shadow-sm">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center">
-							<div>
-								<h1 className="text-lg font-semibold text-gray-800">
-									Chat Global
-								</h1>
-								<div className="flex items-center">
-								</div>
-							</div>
-						</div>
-					</div>
-				</header>
+    setMessages((prev) => [...prev, newMessage]);
+  };
 
-				{/* Messages Area */}
-				<div className="flex-1 overflow-y-auto p-4 space-y-2">
-					{messages.map((message) => (
-						<ChatBubble key={message.id} message={message} />
-					))}
-				</div>
+  // ✅ Guard clause para evitar errores
+  if (!socket || !socket.id) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        Conectando con el chat...
+      </div>
+    );
+  }
 
-				<MessageInput onSendMessage={handleSendMessage} />
-			</div>
-		</div>
-	);
+  return (
+    <div className='min-h-screen bg-gradient-to-br from-sky-200 via-purple-200 to-violet-300 flex justify-center'>
+      <div className="flex flex-col h-screen bg-gray-50" style={{ width: '100%', maxWidth: '600px' }}>
+
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div>
+                <h1 className="text-lg font-semibold text-gray-800">
+                  Chat Global
+                </h1>
+                <div className="flex items-center">
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <MessagesArea messages={messages} ownId={socket.id} />
+        <MessageInput onSendMessage={handleSendMessage} />
+      </div>
+    </div>
+  );
 }
 
 export default GlobalChat;

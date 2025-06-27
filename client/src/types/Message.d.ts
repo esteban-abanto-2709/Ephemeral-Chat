@@ -1,7 +1,5 @@
 export interface Message {
-  id: string;
+  sender: string;
   content: string;
-  timestamp: Date;
-  isOwn: boolean;
-  senderId: string;
+  timestamp?: Date;
 }

@@ -28,7 +28,9 @@ io.on('connection', (socket) => {
 	function handleChatMessage({ content, senderId }: { content: string; senderId: string }) {
 		console.log(`[Socket] Message from ${socket.id}: ${content}`);
 		console.log(`[Chat] From ${senderId}: ${content}`);
-		socket.broadcast.emit('chat:message', { content, senderId });
+
+		const timestamp = new Date().toISOString();
+		socket.broadcast.emit('chat:message', { content, senderId, timestamp });
 	}
 });
 
