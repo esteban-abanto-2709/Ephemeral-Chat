@@ -18,6 +18,11 @@ io.on('connection', (socket) => {
 	console.log(`[Socket] User connected: ${socket.id}`);
 	io.emit('users:count', io.engine.clientsCount);
 
+	// Handle user count requests
+	socket.on('users:count:get', () => {
+		socket.emit('users:count', io.engine.clientsCount);
+	});
+
 	socket.on('chat:message', handleChatMessage);
 
 	socket.on('disconnect', () => {

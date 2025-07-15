@@ -13,15 +13,21 @@ function Landing() {
 
     const [userCount, setUserCount] = useState(0);
 
+    const handleUserCount = (count: number) => {
+        setUserCount(count);
+    };
+
     useEffect(() => {
         if (!socket) return;
 
-        socket.on('users:count', (count) => {
-            setUserCount(count);
-        });
+        // Subscribe to user count updates
+        socket.on('users:count', handleUserCount);
+
+        // On mount, request the current user count from the server
+        socket.emit('users:count:get');
 
         return () => {
-            socket.off('users:count');
+            socket.off('users:count', handleUserCount);
         };
 
     }, [socket]);
