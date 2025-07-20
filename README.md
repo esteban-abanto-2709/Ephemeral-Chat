@@ -1,67 +1,83 @@
-# 💬 Ephemeral Chat — Ephemeral, Anonymous, and Real-Time Messaging
+# Ephemeral Chat
 
-## 🧠 General Concept
-
-Ephemeral Chat is an instant messaging platform that prioritizes ephemerality, anonymity, and privacy. It's designed to facilitate commitment-free, trace-free conversations: messages are deleted as soon as one of the participants disconnects or reloads the page, and no personal information is stored.
-
-The application has two main modes:
-
-## 🔀 1. Random Mode — Anonymous Conversations with Strangers
-
-- Users are paired with another person connected to the system.
-- Both chat anonymously, without the need for names or registration.
-- When either participant disconnects or reloads the page, the entire chat disappears automatically.
-- After a certain number of exchanged messages (e.g., 10), a special message appears:
-  > “Getting along? Share your contact before it’s too late! This system was created as part of a portfolio. Once the page reloads or the connection is lost, you won’t be able to contact each other again.”
-
-## 🔗 2. Private Link Mode — Ephemeral Shared Room
-
-- A user generates a unique link to share with someone else.
-- Both users access the link to enter a private ephemeral chat.
-- A waiting screen is shown until the second person joins:
-  > “Waiting for the other person to join the chat…”
-- Once connected, the behavior is identical to the random mode: real-time conversation with no names or history, which disappears if either person disconnects.
-
-## 🧩 Shared Logic Between Both Modes
-
-- No messages, names, or persistent IDs are stored.
-- If either user disconnects, closes the browser, or loses connection:
-  - The chat content is deleted.
-  - A disconnection message is displayed:
-    > “This conversation is no longer valid. The other user has left.”
-- Both modes use the same chat interface and general communication logic, with minor differences in how users join.
-
-## 🛠️ Technologies Used
-
-Frontend
-
-- React + TypeScript
-- TailwindCSS
-- Socket.IO Client
-
-Backend
-
-- Node.js + Express
-- Socket.IO
-- No database (everything in memory)
+A real-time messaging system built entirely in-memory, where ephemerality is a design feature, not a limitation.
 
 ## 🎯 Project Purpose
 
-This project was built as part of a professional portfolio. It focuses on showcasing skills in:
+Project developed to demonstrate competencies in real-time communication technologies and advanced ephemeral state management. The main technical challenge is managing multiple chat rooms without data persistence, maintaining perfect synchronization between users.
 
-- Real-time communication using WebSockets
-- Handling ephemeral states and synchronization
-- Simple, clear, modern UI design
-- Product thinking with a focus on privacy and user experience
+## 🏗️ Technical Architecture
 
-## ✍️ Ethical and Design Considerations
+### Backend
 
-- The system does not allow sending images, files, or links.
-- No email, username, or identifiable data is requested.
-- The goal is to demonstrate technical creativity and explore controlled social experiences.
+- **Node.js + Express** - HTTP server and REST API
+- **Socket.IO** - Bidirectional real-time communication
+- **Memory management** - All data maintained in RAM
+- **Dynamic room system** - Automatic room creation and destruction
 
-## 🔜 Future Features (Not Included in MVP)
+### Frontend
 
-- 🔁 Automatic Reconnection: Attempts to reconnect if the connection is lost by accident.
-- 🎭 Temporary Anonymous Avatars: Each user receives a random name or icon (e.g., “Blue Cat” and “Red Fox”) just for that session.
-- 🧪 Self-Destructing Messages: Option to send messages that disappear after 5, 10, or 30 seconds.
+- **React + TypeScript** - Reactive user interface
+- **Socket.IO Client** - WebSocket connection to server
+- **TailwindCSS** - Responsive and modern design
+- **Local state management** - No client-side persistence
+
+## 🚀 Main Features
+
+### 1. Global Chat
+
+- Single public room where all connected users can participate
+- Full conversation visibility for all members
+
+### 2. Private Chat (by link)
+
+- Generation of unique links to create private rooms
+- Anyone with the link can join directly
+- System notifications when users connect/disconnect
+- Support for multiple simultaneous participants
+
+### 3. Random Chat
+
+- Automatic matchmaking system between users (initially 2 people)
+- Ability to share the room URL to invite more participants
+- Works identically to private chat once connection is established
+- Automatic notifications for user entry and exit
+
+## 🧠 Technical Challenges Solved
+
+- **Ephemeral state synchronization** between multiple clients
+- **Dynamic room management** with automatic creation and cleanup
+- **Real-time matchmaking** for random pairing
+- **Disconnection handling** and memory cleanup
+- **System notifications** for user connections and disconnections
+
+## 🔒 Design Features
+
+- **Total anonymity** - No registration or user identification
+- **Ephemerality by design** - Messages exist only while there's active connection
+- **Automatic cleanup** - Room destruction when all users disconnect
+- **No traces** - Zero persistence of conversations or personal data
+
+## 🛠️ Tech Stack
+
+``` cmd
+Frontend:  React + TypeScript + TailwindCSS + Socket.IO Client
+Backend:   Node.js + Express + Socket.IO
+Database:  None (everything in-memory)
+```
+
+## 📋 Installation and Usage
+
+*[This section will be completed when development is finished]*
+
+## 🎨 Screenshots
+
+*[This section will be completed when development is finished]*
+
+## 🚧 Project Status
+
+This project is currently under development as part of a professional portfolio to demonstrate competencies in fullstack development and real-time communication handling.
+
+---
+
+*Developed by Esteban Abanto - Demonstrating skills in React, Node.js, WebSockets and real-time architectures.*
