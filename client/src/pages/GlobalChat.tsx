@@ -12,11 +12,16 @@ function GlobalChat() {
   const socket = useContext(SocketContext);
 
   const [messages, setMessages] = useState<Message[]>([]);
+  const [connectedCount, setConnectedCount] = useState<number>(0);
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('chat:message', ({ content, senderId, timestamp }) => {
+    socket.emit('chat:global:join');
+
+    socket.emit('chat:global:count:get');
+
+    socket.on('chat:global:message', ({ content, senderId, timestamp }) => {
 
       const receivedMessage: Message = {
         sender: senderId,
@@ -27,32 +32,32 @@ function GlobalChat() {
       setMessages((prev) => [...prev, receivedMessage]);
     });
 
+    socket.on('chat:global:count', (count: number) => {
+      setConnectedCount(count);
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('chat:message');
+      socket.emit('chat:global:leave');
+
+      socket.off('chat:global:message');
+      socket.off('chat:global:count');
     };
 
   }, [socket]);
 
   const handleSendMessage = (content: string) => {
     console.log('[GlobalChat] Sending message:', content);
+    
     if (content.trim() === '' || !socket || !socket.id) return;
 
-    const newMessage: Message = {
-      sender: socket.id,
-      content,
-      timestamp: new Date(),
-    };
-
-    socket.emit('chat:message', {
+    socket.emit('chat:global:message', {
       senderId: socket.id,
       content,
     });
 
-    setMessages((prev) => [...prev, newMessage]);
+    // setMessages((prev) => [...prev, newMessage]);
   };
 
-  // ✅ Guard clause para evitar errores
   if (!socket || !socket.id) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -68,7 +73,7 @@ function GlobalChat() {
         <ChatHeader
           title="Global Chat"
           icon={<Globe className="h-5 w-5" />}
-          connectedCount={45}
+          connectedCount={connectedCount}
         />
         <ChatArea messages={messages} ownId={socket.id} />
         <ChatInput onSendMessage={handleSendMessage} />

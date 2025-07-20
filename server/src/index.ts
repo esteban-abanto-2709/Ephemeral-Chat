@@ -1,45 +1,43 @@
-import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
+import dotenv from 'dotenv';
+import { startServer } from './server';
+import { logger } from './utils/logger';
 
-const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-	cors: {
-		origin: '*', // Se remueve en producción
+// Cargar variables de entorno
+dotenv.config();
+
+// Función principal
+async function main() {
+	try {
+		// Obtener puerto desde variables de entorno
+		const PORT = parseInt(process.env.PORT || '3000', 10);
+
+		// Validar puerto
+		if (isNaN(PORT) || PORT < 1 || PORT > 65535) {
+			throw new Error(`Invalid port: ${process.env.PORT}. Must be a number between 1 and 65535`);
+		}
+
+		// Mostrar información de inicio
+		logger.info('App', '🚀 Starting Ephemeral Chat Server...');
+		logger.info('Config', `Port: ${PORT}`);
+		logger.info('Config', `Environment: ${process.env.NODE_ENV || 'development'}`);
+
+		// Iniciar servidor
+		await startServer(PORT);
+
+		logger.info('App', '✅ Ephemeral Chat Server started successfully!');
+		logger.info('App', `🌐 Server running on http://localhost:${PORT}`);
+		logger.info('App', `📊 Health check: http://localhost:${PORT}/health`);
+
+	} catch (error) {
+		logger.error('App', 'Failed to start application', error);
+
+		// Salir con código de error
+		process.exit(1);
 	}
-});
+}
 
-app.get('/', (req, res) => {
-	res.send('Hello from server!');
-});
+// Ejecutar aplicación directamente (en ES modules es más directo)
+main();
 
-io.on('connection', (socket) => {
-	console.log(`[Socket] User connected: ${socket.id}`);
-	io.emit('users:count', io.engine.clientsCount);
-
-	// Handle user count requests
-	socket.on('users:count:get', () => {
-		socket.emit('users:count', io.engine.clientsCount);
-	});
-
-	socket.on('chat:message', handleChatMessage);
-
-	socket.on('disconnect', () => {
-		console.log(`[Socket] User disconnected: ${socket.id}`);
-		io.emit('users:count', io.engine.clientsCount);
-	});
-
-	function handleChatMessage({ content, senderId }: { content: string; senderId: string }) {
-		console.log(`[Socket] Message from ${socket.id}: ${content}`);
-		console.log(`[Chat] From ${senderId}: ${content}`);
-
-		const timestamp = new Date().toISOString();
-		socket.broadcast.emit('chat:message', { content, senderId, timestamp });
-	}
-});
-
-const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-	console.log(`Server running on http://localhost:${PORT}`);
-});
+// Exportar main para testing
+export { main };
