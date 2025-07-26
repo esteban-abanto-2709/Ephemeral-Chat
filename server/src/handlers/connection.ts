@@ -34,6 +34,13 @@ const registerGlobalChatHandlers = (io: Server, socket: ExtendedSocket) => {
 
         const roomSize = io.sockets.adapter.rooms.get('chat:global')?.size || 0;
         io.to('chat:global').emit('chat:global:count', roomSize);
+
+        // Emitir mensaje de bienvenida
+        socket.to('chat:global').emit('chat:global:message', {
+            content: `Alpharius#${socket.id.slice(0, 5)} se acaba de conectar`,
+            senderId: 'system',
+            timestamp: new Date().toISOString()
+        });
     });
 
     // Salir del chat global
@@ -46,6 +53,13 @@ const registerGlobalChatHandlers = (io: Server, socket: ExtendedSocket) => {
 
         const roomSize = io.sockets.adapter.rooms.get('chat:global')?.size || 0;
         io.to('chat:global').emit('chat:global:count', roomSize);
+
+        // Emitir mensaje de desconexión
+        socket.broadcast.to('chat:global').emit('chat:global:message', {
+            content: `Alpharius#${socket.id.slice(0, 5)} se acaba de desconectar`,
+            senderId: 'system',
+            timestamp: new Date().toISOString()
+        });
     });
 
     // Obtener conteo del chat global
@@ -126,7 +140,14 @@ const registerDisconnectHandler = (io: Server, socket: ExtendedSocket) => {
             const roomSize = io.sockets.adapter.rooms.get('chat:global')?.size || 0;
             io.to('chat:global').emit('chat:global:count', roomSize);
         }
-
+        
+        // Emitir mensaje de desconexión
+        socket.broadcast.to('chat:global').emit('chat:global:message', {
+            content: `Alpharius#${socket.id.slice(0, 5)} se acaba de desconectar`,
+            senderId: 'system',
+            timestamp: new Date().toISOString()
+        });
+        
         // TODO: Aquí agregaremos lógica para limpiar salas privadas y emparejamientos
     });
 };
