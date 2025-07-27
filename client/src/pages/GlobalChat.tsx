@@ -68,7 +68,7 @@ function GlobalChat() {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-sky-200 via-purple-200 to-violet-300 flex justify-center'>
-      <div className="flex flex-col h-screen bg-gray-50" style={{ width: '100%', maxWidth: '600px' }}>
+      <div className="w-full max-w-md h-screen flex flex-col" style={{ width: '100%', maxWidth: '600px' }}>
 
         <ChatHeader
           title="Global Chat"
