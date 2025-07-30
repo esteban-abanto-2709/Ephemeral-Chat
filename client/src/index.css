@@ -20,6 +20,14 @@
   border: 1px solid rgba(148, 163, 184, 0.3);
 }
 
+/* Nuevo estilo para mensajes eliminados - similar a message-other pero más tenue */
+.message-deleted {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  opacity: 0.8;
+}
 
 /* Estilos para header, área de chat e input */
 .glass {

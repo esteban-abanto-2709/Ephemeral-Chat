@@ -18,18 +18,37 @@ function GlobalChat() {
     if (!socket) return;
 
     socket.emit('chat:global:join');
-
     socket.emit('chat:global:count:get');
 
-    socket.on('chat:global:message', ({ content, senderId, timestamp }) => {
-
+    socket.on('chat:global:message', ({ content, senderId, timestamp, isDeleted, originalSender }) => {
       const receivedMessage: Message = {
         sender: senderId,
         content,
         timestamp: new Date(timestamp),
+        isDeleted,
+        originalSender
       };
 
       setMessages((prev) => [...prev, receivedMessage]);
+    });
+
+    // Nuevo: Manejar eliminación de mensajes cuando un usuario sale
+    socket.on('chat:global:messages:delete', (userId: string) => {
+      setMessages((prevMessages) => 
+        prevMessages.map((message) => {
+          // Si el mensaje es del usuario que salió, marcarlo como eliminado
+          if (message.sender === userId && !message.isDeleted) {
+            return {
+              ...message,
+              isDeleted: true,
+              originalSender: userId,
+              sender: 'deleted', // Cambiar el sender para que no se muestre como propio
+              content: '' // Limpiar el contenido original
+            };
+          }
+          return message;
+        })
+      );
     });
 
     socket.on('chat:global:count', (count: number) => {
@@ -38,8 +57,8 @@ function GlobalChat() {
 
     return () => {
       socket.emit('chat:global:leave');
-
       socket.off('chat:global:message');
+      socket.off('chat:global:messages:delete');
       socket.off('chat:global:count');
     };
 
@@ -54,8 +73,6 @@ function GlobalChat() {
       senderId: socket.id,
       content,
     });
-
-    // setMessages((prev) => [...prev, newMessage]);
   };
 
   if (!socket || !socket.id) {

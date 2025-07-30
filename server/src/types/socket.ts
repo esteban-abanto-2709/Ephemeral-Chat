@@ -5,6 +5,8 @@ export interface ChatMessage {
     content: string;
     senderId: string;
     timestamp: string;
+    isDeleted?: boolean;  // Nueva propiedad
+    originalSender?: string;  // Para guardar el ID original
 }
 
 // Datos que pueden venir del cliente al enviar mensaje
@@ -23,6 +25,9 @@ export interface ExtendedSocket extends Socket {
 
 // Eventos que el servidor puede emitir
 export interface ServerToClientEvents {
+    // ... eventos existentes
+    'chat:global:messages:delete': (userId: string) => void;  // Nuevo evento
+
     // Conteo de usuarios
     'users:count': (count: number) => void;
     'chat:global:count': (count: number) => void;
