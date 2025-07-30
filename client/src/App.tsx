@@ -6,6 +6,7 @@ import Landing from '@/pages/Landing';
 import GlobalChat from '@/pages/GlobalChat';
 import PrivateChat from '@/pages/PrivateChat';
 import RandomChat from '@/pages/RandomChat';
+import NotFound from '@/pages/NotFound';
 
 import { SocketContext } from '@/context/SocketContext';
 const socket = io('http://localhost:3000'); // Cambia esto en producción
@@ -31,6 +32,7 @@ function App() {
 					<Route path="/chat/global" element={<GlobalChat />} />
 					<Route path="/chat/private/*" element={<PrivateChat />} />
 					<Route path="/chat/random/*" element={<RandomChat />} />
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Router>
 		</SocketContext.Provider>
