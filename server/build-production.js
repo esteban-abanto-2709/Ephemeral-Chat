@@ -6,7 +6,7 @@ console.log('🚀 Building Ephemeral Chat for production...');
 try {
     // Instalar dependencias del servidor
     console.log('📦 Installing server dependencies...');
-    execSync('npm install', { stdio: 'inherit' });
+    execSync('npm install --include=dev', { stdio: 'inherit' });
     console.log('   ✓ Server dependencies installed');
 
     // Instalar dependencias del cliente
