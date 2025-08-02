@@ -18,7 +18,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const httpServer = createServer(app);
 
-// Crear servidor Socket.IO con tipos
 const io = new Server<
     ClientToServerEvents,
     ServerToClientEvents,
@@ -26,7 +25,7 @@ const io = new Server<
     SocketData
 >(httpServer, {
     cors: {
-        origin: process.env.NODE_ENV === 'production' ? false : '*',
+        origin: ['http://localhost:5173'], // Development client URL
         methods: ['GET', 'POST']
     },
     pingTimeout: 60000,
@@ -46,12 +45,9 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Servir archivos estáticos
 app.use(express.static(path.join(__dirname, '../../client/dist')));
 
-// Middleware personalizado para manejar SPA (en lugar de app.get('*'))
 app.use((req, res, next) => {
-    // Si la ruta no es de API y no encontró un archivo estático
     if (!req.path.startsWith('/api') && !req.path.includes('.')) {
         res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
     } else {
@@ -59,9 +55,7 @@ app.use((req, res, next) => {
     }
 });
 
-// Función para configurar los handlers de Socket.IO
 const setupSocketHandlers = () => {
-    // Importar el handler de conexión
     import('./handlers/connection.js').then(({ handleConnection }) => {
         io.on('connection', (socket: ExtendedSocket) => {
             handleConnection(io, socket);
@@ -71,21 +65,17 @@ const setupSocketHandlers = () => {
     });
 };
 
-// Función para iniciar el servidor
 const startServer = (port: number = 3000): Promise<void> => {
     return new Promise((resolve, reject) => {
         try {
-            // Configurar handlers
             setupSocketHandlers();
 
-            // Iniciar servidor
             httpServer.listen(port, () => {
                 logger.server('Server started', port);
                 logger.info('Environment', `Running in ${process.env.NODE_ENV || 'development'} mode`);
                 resolve();
             });
 
-            // Manejo de errores del servidor
             httpServer.on('error', (error) => {
                 logger.error('Server', 'Failed to start server', error);
                 reject(error);
@@ -98,14 +88,11 @@ const startServer = (port: number = 3000): Promise<void> => {
     });
 };
 
-// Función para cerrar el servidor gracefully
 const stopServer = (): Promise<void> => {
     return new Promise((resolve) => {
         logger.info('Server', 'Shutting down server...');
 
-        // Cerrar todas las conexiones de socket
         io.close(() => {
-            // Cerrar servidor HTTP
             httpServer.close(() => {
                 logger.info('Server', 'Server closed gracefully');
                 resolve();
@@ -114,7 +101,6 @@ const stopServer = (): Promise<void> => {
     });
 };
 
-// Manejo de señales del sistema para cierre graceful
 process.on('SIGTERM', async () => {
     logger.info('Server', 'Received SIGTERM signal');
     await stopServer();
@@ -127,7 +113,6 @@ process.on('SIGINT', async () => {
     process.exit(0);
 });
 
-// Manejo de errores no capturados
 process.on('uncaughtException', (error) => {
     logger.error('Process', 'Uncaught Exception', error);
     process.exit(1);
@@ -138,5 +123,4 @@ process.on('unhandledRejection', (reason, promise) => {
     process.exit(1);
 });
 
-// Exportar instancias y funciones
 export { app, httpServer, io, startServer, stopServer };
