@@ -1,7 +1,7 @@
 {
 	"name": "server",
 	"version": "1.0.0",
-	"description": "",
+	"description": "Ephemeral Chat Server",
 	"main": "index.js",
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
@@ -11,10 +11,13 @@
 		"build:prod": "node build-production.js",
 		"lint": "eslint . --ext .js,.ts"
 	},
-	"keywords": [],
+	"keywords": ["chat", "realtime", "socket.io", "ephemeral"],
 	"author": "Esteban Abanto",
 	"license": "ISC",
 	"type": "module",
+	"engines": {
+		"node": ">=18.0.0"
+	},
 	"dependencies": {
 		"dotenv": "^17.2.0",
 		"express": "^5.1.0",

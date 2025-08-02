@@ -11,7 +11,7 @@ try {
 
     // Instalar dependencias del cliente
     console.log('📦 Installing client dependencies...');
-    execSync('cd ../client && npm install', { stdio: 'inherit' });
+    execSync('cd ../client && npm install --include=dev', { stdio: 'inherit' });
     console.log('   ✓ Client dependencies installed');
 
     // Limpiar builds anteriores
