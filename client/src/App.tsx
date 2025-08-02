@@ -9,7 +9,15 @@ import RandomChat from '@/pages/RandomChat';
 import NotFound from '@/pages/NotFound';
 
 import { SocketContext } from '@/context/SocketContext';
-const socket = io('http://localhost:3000'); // Cambia esto en producción
+
+const getSocketUrl = () => {
+  if (import.meta.env.PROD) {
+    return window.location.origin;
+  }
+  return 'http://localhost:3000';
+};
+
+const socket = io(getSocketUrl());
 
 function App() {
 

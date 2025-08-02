@@ -1,6 +1,8 @@
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { logger } from './utils/logger';
 import {
     ServerToClientEvents,
@@ -10,10 +12,10 @@ import {
     ExtendedSocket
 } from './types/socket';
 
-// Crear aplicación Express
-const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Crear servidor HTTP
+const app = express();
 const httpServer = createServer(app);
 
 // Crear servidor Socket.IO con tipos
@@ -27,31 +29,34 @@ const io = new Server<
         origin: process.env.NODE_ENV === 'production' ? false : '*',
         methods: ['GET', 'POST']
     },
-    // Configuraciones adicionales
     pingTimeout: 60000,
     pingInterval: 25000,
 });
 
-// Middleware de Express
 app.use(express.json());
 
-// Rutas básicas de Express
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
     res.json({
-        message: 'Ephemeral Chat Server',
-        status: 'running',
-        timestamp: new Date().toISOString(),
-        connections: io.engine.clientsCount
-    });
-});
-
-app.get('/health', (req, res) => {
-    res.json({
+        message: 'Ephemeral Chat',
         status: 'healthy',
+        timestamp: new Date().toISOString(),
         uptime: process.uptime(),
         connections: io.engine.clientsCount,
         memory: process.memoryUsage()
     });
+});
+
+// Servir archivos estáticos
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+// Middleware personalizado para manejar SPA (en lugar de app.get('*'))
+app.use((req, res, next) => {
+    // Si la ruta no es de API y no encontró un archivo estático
+    if (!req.path.startsWith('/api') && !req.path.includes('.')) {
+        res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+    } else {
+        next();
+    }
 });
 
 // Función para configurar los handlers de Socket.IO
