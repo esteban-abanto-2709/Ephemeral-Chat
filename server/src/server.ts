@@ -25,7 +25,7 @@ const io = new Server<
     SocketData
 >(httpServer, {
     cors: {
-        origin: ['http://localhost:5173'], // Development client URL
+        origin: process.env.NODE_ENV === 'production' ? false : '*',
         methods: ['GET', 'POST']
     },
     pingTimeout: 60000,
