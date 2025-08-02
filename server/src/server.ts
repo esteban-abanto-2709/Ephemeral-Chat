@@ -3,14 +3,14 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { logger } from './utils/logger';
+import { logger } from './utils/logger.js';
 import {
     ServerToClientEvents,
     ClientToServerEvents,
     InterServerEvents,
     SocketData,
     ExtendedSocket
-} from './types/socket';
+} from './types/socket.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

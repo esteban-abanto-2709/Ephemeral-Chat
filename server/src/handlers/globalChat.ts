@@ -1,9 +1,10 @@
 import { Server } from 'socket.io';
-import { logger } from '../utils/logger';
-import { ExtendedSocket } from '../types/socket';
+import { logger } from '../utils/logger.js';
+import { ExtendedSocket } from '../types/socket.js';
 
 // Todo lo relacionado con el chat global
 export const setupGlobalChatHandlers = (io: Server, socket: ExtendedSocket) => {
+    
     // Unirse al chat global
     socket.on('chat:global:join', () => {
         socket.join('chat:global');
@@ -33,7 +34,6 @@ export const setupGlobalChatHandlers = (io: Server, socket: ExtendedSocket) => {
         const roomSize = io.sockets.adapter.rooms.get('chat:global')?.size || 0;
         io.to('chat:global').emit('chat:global:count', roomSize);
 
-        // NUEVO: Emitir evento para eliminar mensajes del usuario que salió
         socket.broadcast.to('chat:global').emit('chat:global:messages:delete', socket.id);
 
         socket.broadcast.to('chat:global').emit('chat:global:message', {
@@ -43,19 +43,16 @@ export const setupGlobalChatHandlers = (io: Server, socket: ExtendedSocket) => {
         });
     });
 
-    // Obtener conteo del chat global
     socket.on('chat:global:count:get', () => {
         const roomSize = io.sockets.adapter.rooms.get('chat:global')?.size || 0;
         socket.emit('chat:global:count', roomSize);
     });
 
-    // Manejar mensajes del chat global
     socket.on('chat:global:message', (payload) => {
         handleGlobalMessage(io, socket, payload);
     });
 };
 
-// Función para manejar mensajes (la misma que tenías)
 const handleGlobalMessage = (io: Server, socket: ExtendedSocket, payload: any) => {
     if (!payload || !payload.content || !payload.senderId) {
         socket.emit('error', 'Mensaje inválido: falta contenido o ID del remitente');

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-import { startServer } from './server';
-import { logger } from './utils/logger';
+import { startServer } from './server.js';
+import { logger } from './utils/logger.js';
 
 dotenv.config();
 
