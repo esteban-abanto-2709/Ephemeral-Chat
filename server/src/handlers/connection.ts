@@ -34,19 +34,19 @@ const setupDisconnectHandler = (io: Server, socket: ExtendedSocket) => {
 
         io.emit('users:count', io.engine.clientsCount);
 
-        if (socket.rooms.has('chat:global')) {
+        if (socket.currentRoom === 'chat:global') {
             const roomSize = io.sockets.adapter.rooms.get('chat:global')?.size || 0;
             io.to('chat:global').emit('chat:global:count', roomSize);
 
             logger.debug('Cleanup', `Cleaning up room: chat:global for ${socket.id}`);
+
+            socket.broadcast.to('chat:global').emit('chat:global:messages:delete', socket.id);
+
+            socket.broadcast.to('chat:global').emit('chat:global:message', {
+                content: `Alpharius#${socket.id.slice(0, 5)} se acaba de desconectar`,
+                senderId: 'system',
+                timestamp: new Date().toISOString()
+            });
         }
-
-        socket.broadcast.to('chat:global').emit('chat:global:messages:delete', socket.id);
-
-        socket.broadcast.to('chat:global').emit('chat:global:message', {
-            content: `Alpharius#${socket.id.slice(0, 5)} se acaba de desconectar`,
-            senderId: 'system',
-            timestamp: new Date().toISOString()
-        });
     });
 };
