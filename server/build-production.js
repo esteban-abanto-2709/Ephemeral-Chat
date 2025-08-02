@@ -4,7 +4,17 @@ import fs from 'fs';
 console.log('🚀 Building Ephemeral Chat for production...');
 
 try {
-    // 1. Limpiar builds anteriores
+    // Instalar dependencias del servidor
+    console.log('📦 Installing server dependencies...');
+    execSync('npm install', { stdio: 'inherit' });
+    console.log('   ✓ Server dependencies installed');
+
+    // Instalar dependencias del cliente
+    console.log('📦 Installing client dependencies...');
+    execSync('cd ../client && npm install', { stdio: 'inherit' });
+    console.log('   ✓ Client dependencies installed');
+
+    // Limpiar builds anteriores
     console.log('🧹 Cleaning previous builds...');
     
     const serverDistDir = 'dist';
@@ -13,12 +23,12 @@ try {
         console.log('   ✓ Server dist cleaned');
     }
 
-    // 2. Build del cliente
+    // Build del cliente
     console.log('📦 Building client...');
     execSync('cd ../client && npm run build', { stdio: 'inherit' });
     console.log('   ✓ Client build completed');
-    
-    // 3. Build del servidor
+
+    // Build del servidor
     console.log('🔧 Building server...');
     execSync('npm run build', { stdio: 'inherit' });
     console.log('   ✓ Server build completed');
