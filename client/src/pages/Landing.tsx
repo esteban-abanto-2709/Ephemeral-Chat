@@ -34,26 +34,26 @@ function Landing() {
 
     return (
         <GradientBackground>
-            <div className="flex flex-col min-h-screen">
+
+            <div className="flex flex-col min-h-dvh">
+
                 <main className="flex-1 flex items-center justify-center px-4">
+
                     <div className="text-center max-w-2xl mx-auto">
-                        {/* Logo/Icon */}
-                        <div className="mb-8">
-                            <MessageCircle className="h-16 w-16 text-white mx-auto mb-4 drop-shadow-lg" />
+                        
+                        <div className="mb-8 mt-8">
+                            <MessageCircle className="h-16 w-16 text-white mx-auto drop-shadow-lg" />
                         </div>
 
-                        {/* Title */}
                         <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
                             Ephemeral Chat
                         </h1>
 
-                        {/* Subtitle */}
-                        <p className="text-xl md:text-2xl text-white/90 mb-12 font-light">
+                        <p className="text-xl md:text-2xl text-white/90 mb-6 font-light">
                             Conversaciones que desaparecen para siempre
                         </p>
 
-                        {/* Action Buttons */}
-                        <div className="space-y-4 mb-12">
+                        <div className="space-y-4 mb-8">
                             <button
                                 onClick={() => navigate('/chat/global')}
                                 className="w-full max-w-sm h-14 px-6 text-lg font-medium bg-white text-gray-800 hover:bg-gray-50 shadow-lg transition-all duration-200 hover:shadow-xl rounded-md inline-flex items-center justify-center"
@@ -79,12 +79,13 @@ function Landing() {
                             </button>
                         </div>
 
-                        {/* User Counter */}
                         <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white shadow-lg">
                             <Users className="h-5 w-5 mr-2" />
                             <span className="font-medium">{userCount} usuarios conectados</span>
                         </div>
+
                     </div>
+
                 </main>
 
                 {/* Footer */}
