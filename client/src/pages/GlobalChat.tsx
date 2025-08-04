@@ -34,9 +34,9 @@ function GlobalChat() {
 
     // Nuevo: Manejar eliminación de mensajes cuando un usuario sale
     socket.on('chat:global:messages:delete', (userId: string) => {
-      setMessages((prevMessages) => 
+      setMessages((prevMessages) =>
         prevMessages.map((message) => {
-          // Si el mensaje es del usuario que salió, marcarlo como eliminado
+
           if (message.sender === userId && !message.isDeleted) {
             return {
               ...message,
@@ -66,7 +66,7 @@ function GlobalChat() {
 
   const handleSendMessage = (content: string) => {
     console.log('[GlobalChat] Sending message:', content);
-    
+
     if (content.trim() === '' || !socket || !socket.id) return;
 
     socket.emit('chat:global:message', {
@@ -84,8 +84,8 @@ function GlobalChat() {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-sky-200 via-purple-200 to-violet-300 flex justify-center'>
-      <div className="w-full max-w-md h-screen flex flex-col" style={{ width: '100%', maxWidth: '600px' }}>
+    <div className="min-h-dvh bg-gradient-to-br from-sky-200 via-purple-200 to-violet-300 flex justify-center overflow-hidden">
+      <div className="w-full max-w-md flex flex-col h-dvh overflow-hidden" style={{ maxWidth: '600px' }}>
 
         <ChatHeader
           title="Global Chat"
