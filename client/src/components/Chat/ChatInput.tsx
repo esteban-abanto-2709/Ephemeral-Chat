@@ -25,7 +25,9 @@ export const ChatInput = ({ onSendMessage }: ChatInputProps) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Escribe tu mensaje..."
-          className="flex-1 h-12 rounded-2xl chat-input border-0 px-4 py-3 text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-sm font-medium"
+          className="flex-1 h-12 rounded-2xl chat-input border-0 px-4 py-3 
+             text-slate-800 placeholder-slate-500 focus:outline-none 
+             focus:ring-2 focus:ring-indigo-300 text-base font-medium"
         />
 
         <button
